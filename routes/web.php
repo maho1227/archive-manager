@@ -25,4 +25,8 @@ Route::get('/dashboard/youtube', function () {
     return Inertia::render('YoutubeDashboard');
 })->name('dashboard.youtube');
 
+Route::get('/archiveList', function () {
+    return Inertia::render('ArchiveList');
+});
+
 require __DIR__ . '/auth.php';

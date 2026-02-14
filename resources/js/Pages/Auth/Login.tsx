@@ -18,12 +18,22 @@ export default function Login({
         email: '',
         password: '',
         remember: false as boolean,
+        user_id: '', // ★ 追加
     });
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
 
+        if (!data.user_id.trim()) {
+            alert("ユーザーIDを入力してください");
+            return;
+        }
+
+        // ★ ログイン成功後に user_id を保存
         post(route('login'), {
+            onSuccess: () => {
+                localStorage.setItem("user_id", data.user_id);
+            },
             onFinish: () => reset('password'),
         });
     };
@@ -39,6 +49,22 @@ export default function Login({
             )}
 
             <form onSubmit={submit}>
+                {/* ★ 追加：ユーザーID入力欄 */}
+                <div className="mb-4">
+                    <InputLabel htmlFor="user_id" value="ユーザーID" />
+
+                    <TextInput
+                        id="user_id"
+                        type="text"
+                        name="user_id"
+                        value={data.user_id}
+                        className="mt-1 block w-full"
+                        onChange={(e) => setData('user_id', e.target.value)}
+                    />
+
+                    <InputError message={errors.user_id} className="mt-2" />
+                </div>
+
                 <div>
                     <InputLabel htmlFor="email" value="Email" />
 
@@ -78,10 +104,7 @@ export default function Login({
                             name="remember"
                             checked={data.remember}
                             onChange={(e) =>
-                                setData(
-                                    'remember',
-                                    (e.target.checked || false) as false,
-                                )
+                                setData('remember', e.target.checked)
                             }
                         />
                         <span className="ms-2 text-sm text-gray-600">

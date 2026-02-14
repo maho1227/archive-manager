@@ -16,37 +16,69 @@ interface VideoItem {
   };
 }
 
-interface VideoCardGridProps {
+interface Props {
   videos: VideoItem[];
+  onArchive?: (video: VideoItem) => void;
+  onDelete?: (video: VideoItem) => void;
+  showArchiveButton?: boolean;
+  showDeleteButton?: boolean;
 }
 
-const VideoCardGrid: React.FC<VideoCardGridProps> = ({ videos }) => (
-  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-    {videos.map((video) => (
-      <div
-        key={video.snippet.resourceId.videoId}
-        className="border border-gray-300 rounded shadow p-3 text-sm bg-white"
-      >
-        <a
-          href={`https://www.youtube.com/watch?v=${video.snippet.resourceId.videoId}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="block"
-        >
-          <img
-            src={video.snippet.thumbnails.medium.url}
-            alt={video.snippet.title}
-            className="w-full h-auto mb-2 rounded"
-          />
-        </a>
-        <h2 className="font-semibold text-sm line-clamp-2">{video.snippet.title}</h2>
-        <p className="text-gray-600 text-xs mb-1">
-          投稿日: {new Date(video.snippet.publishedAt).toLocaleDateString()}
-        </p>
-        <p className="text-gray-800 text-xs line-clamp-2">{video.snippet.description}</p>
-      </div>
-    ))}
-  </div>
-);
+const VideoCardGrid: React.FC<Props> = ({
+  videos,
+  onArchive,
+  onDelete,
+  showArchiveButton = true,
+  showDeleteButton = false,
+}) => {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
+      {videos.map((video) => {
+        const v = video.snippet;
+        const videoUrl = `https://www.youtube.com/watch?v=${v.resourceId.videoId}`;
+
+        return (
+          <div
+            key={v.resourceId.videoId}
+            className="border rounded-lg shadow p-4 bg-white flex flex-col"
+          >
+            <a href={videoUrl} target="_blank" rel="noopener noreferrer">
+              <img
+                src={v.thumbnails.medium.url}
+                alt={v.title}
+                className="w-full rounded hover:opacity-90 transition"
+              />
+            </a>
+
+            <h3 className="font-bold mt-2 text-sm">{v.title}</h3>
+            <p className="text-xs text-gray-500">
+              {new Date(v.publishedAt).toLocaleString()}
+            </p>
+
+            {/* アーカイブ登録ボタン */}
+            {showArchiveButton && onArchive && (
+              <button
+                onClick={() => onArchive(video)}
+                className="mt-auto bg-blue-500 text-white py-1 rounded hover:bg-blue-600"
+              >
+                お気に入りアーカイブ登録
+              </button>
+            )}
+
+            {/* 削除ボタン */}
+            {showDeleteButton && onDelete && (
+              <button
+                onClick={() => onDelete(video)}
+                className="mt-auto bg-red-500 text-white py-1 rounded hover:bg-red-600"
+              >
+                お気に入りアーカイブ削除
+              </button>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+};
 
 export default VideoCardGrid;

@@ -3,6 +3,9 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ArchiveController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
+
 
 Route::get('/youtube/channel-uploads', function (Request $request) {
     $channelId = $request->input('channelId');
@@ -44,3 +47,10 @@ Route::get('/youtube/channel-uploads', function (Request $request) {
     $playlistRes = Http::get('https://www.googleapis.com/youtube/v3/playlistItems', $params);
     return $playlistRes->json();
 });
+
+Route::post('/login', [AuthenticatedSessionController::class, 'store'])->name('api.login');
+Route::post('/logout', [AuthenticatedSessionController::class, 'destroy']);
+Route::post('/archives', [ArchiveController::class, 'store']);
+Route::get('/archiveList', [ArchiveController::class, 'index']);
+Route::delete('/archives/{videoId}', [ArchiveController::class, 'destroy']);
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) { return $request->user(); });
