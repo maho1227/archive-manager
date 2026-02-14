@@ -26,25 +26,28 @@ const SearchForm: React.FC<SearchFormProps> = ({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mb-6 space-y-3">
-      <input
-        type="text"
-        value={channelId}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder="チャンネルIDを入力"
-        className="border px-3 py-2 rounded w-80"
-      />
+    <form onSubmit={handleSubmit} className="mb-6">
+      <div className="flex items-center gap-x-4">
+        <input
+          type="text"
+          value={channelId}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder="チャンネルIDを入力"
+          className="border px-3 py-2 rounded w-80"
+        />
 
-      {/* ★ スピナー削除 → 常にボタンを表示 */}
-      <button
-        type="submit"
-        disabled={loading}
-        className={`px-4 py-2 rounded text-white ${
-          loading ? "bg-blue-300 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600"
-        }`}
-      >
-        {loading ? "検索中..." : "検索"}
-      </button>
+        <button
+          type="submit"
+          disabled={loading}
+          className={`px-4 py-2 rounded text-white ${
+            loading
+              ? "bg-blue-300 cursor-not-allowed"
+              : "bg-blue-500 hover:bg-blue-600"
+          }`}
+        >
+          {loading ? "検索中..." : "検索"}
+        </button>
+      </div>
     </form>
   );
 };
