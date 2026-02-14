@@ -1,26 +1,32 @@
-# 1. PHP + 必要拡張
-FROM php:8.2-fpm
+FROM composer AS composer
 
-RUN apt-get update && apt-get install -y \
-    git unzip libpq-dev libzip-dev \
-    && docker-php-ext-install pdo pdo_pgsql zip
+# copying the source directory and install the dependencies with composer
+COPY ./ /app
+COPY .env.example /app/.env
 
-# Composer
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+# linecorp/line-bot-sdk requires ext-sockets
+RUN docker-php-ext-install sockets
 
-# 作業ディレクトリ
-WORKDIR /var/www/html
+# run composer install to install the dependencies
+RUN composer install --no-interaction --optimize-autoloader --no-dev
 
-# プロジェクトファイルをコピー
-COPY . .
+# continue stage build with the desired image and copy the source including the
+FROM trafex/php-nginx:latest
 
-# Composer install
-RUN composer install --no-dev --optimize-autoloader
+USER root
 
-# Laravel キャッシュ最適化
-RUN php artisan config:cache
-RUN php artisan route:cache
-RUN php artisan view:cache
+# Install Laravel framework system requirements (https://laravel.com/docs/9.x/deployment#server-requirements)
+RUN apk add \
+        php81-bcmath \
+        php81-fileinfo \
+        php81-tokenizer \
+        php81-mbstring \
+        php81-pdo_mysql
 
-# 2. Web サーバーとして PHP のビルトインサーバーを使用
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=10000"]
+# dependencies downloaded by composer
+COPY --chown=nginx --from=composer /app /var/www/html
+COPY --from=composer /app/conf/nginx.conf /etc/nginx/nginx.conf
+COPY --from=composer /app/php.ini /usr/local/etc/php/
+
+RUN chown -R nobody:nobody /var/www/html/storage
+USER nobody
