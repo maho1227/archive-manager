@@ -1,20 +1,25 @@
-FROM richarvey/nginx-php-fpm:3.1.6
+FROM php:8.2-fpm
 
+# 必要パッケージ
+RUN apt-get update && apt-get install -y \
+    git unzip libpq-dev libzip-dev \
+    && docker-php-ext-install pdo pdo_pgsql zip
+
+# Composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+WORKDIR /var/www/html
+
+# プロジェクトファイルをコピー
 COPY . .
 
-# Image config
-ENV SKIP_COMPOSER 1
-ENV WEBROOT /var/www/html/public
-ENV PHP_ERRORS_STDERR 1
-ENV RUN_SCRIPTS 1
-ENV REAL_IP_HEADER 1
+# Composer install
+RUN composer install --no-dev --optimize-autoloader
 
-# Laravel config
-ENV APP_ENV production
-ENV APP_DEBUG false
-ENV LOG_CHANNEL stderr
+# Laravel キャッシュ
+RUN php artisan config:cache
+RUN php artisan route:cache
+RUN php artisan view:cache
 
-# Allow composer to run as root
-ENV COMPOSER_ALLOW_SUPERUSER 1
-
-CMD ["/start.sh"]
+# Render が渡す PORT を使って起動
+CMD ["sh", "-c", "php artisan serve --host=0.0.0.0 --port=${PORT}"]
