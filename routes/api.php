@@ -48,8 +48,8 @@ Route::get('/youtube/channel-uploads', function (Request $request) {
     return $playlistRes->json();
 });
 
-Route::post('/login', [AuthenticatedSessionController::class, 'store'])->name('api.login');
-Route::post('/logout', [AuthenticatedSessionController::class, 'destroy']);
+// Route::post('/login', [AuthenticatedSessionController::class, 'store'])->name('api.login');
+// Route::post('/logout', [AuthenticatedSessionController::class, 'destroy']);
 Route::post('/archives', [ArchiveController::class, 'store']);
 Route::get('/archiveList', [ArchiveController::class, 'index']);
 Route::delete('/archives/{videoId}', [ArchiveController::class, 'destroy']);

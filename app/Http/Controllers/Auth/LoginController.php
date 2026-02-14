@@ -24,6 +24,7 @@ public function store(Request $request)
             $user->user_id = $request->user_id;
             $user->save();
         }
+        dd($request);
 
         return redirect()->intended('/dashboard/youtube');
     }

@@ -3,14 +3,24 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+
 use App\Models\Archives;
 use App\Models\User;
 
 class ArchiveController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return response()->json(Archives::orderBy('created_at', 'desc')->get());
+        // ★ クエリパラメータから user_id を取得 
+        $userId = $request->query('user_id'); // ★ user_id が無い場合は空配列を返す（安全） 
+        if (!$userId) {
+            return response()->json([]);
+        }
+        // ★ user_id で絞り込んで返す 
+        return response()->json(Archives::where('user_id', $userId)
+            ->orderBy('created_at', 'desc')
+            ->distinct('video_id')
+            ->get());
     }
     public function store(Request $request)
     {
@@ -57,10 +67,12 @@ class ArchiveController extends Controller
         return response()->json($archive, 201);
     }
 
-    public function destroy($videoId)
+    public function destroy(Request $request, $videoId)
     {
+        $userId = $request->query('user_id');
         // video_id で検索 
-        $archive = Archives::where('video_id', $videoId)->first();
+        $archive = Archives::where('user_id', $userId)
+            ->where('video_id', $videoId)->first();
         if (!$archive) {
             return response()->json(['message' => 'Not found'], 404);
         }

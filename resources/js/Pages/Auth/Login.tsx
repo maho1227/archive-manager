@@ -29,7 +29,6 @@ export default function Login({
             return;
         }
 
-        // ★ ログイン成功後に user_id を保存
         post(route('login'), {
             onSuccess: () => {
                 localStorage.setItem("user_id", data.user_id);
@@ -49,7 +48,7 @@ export default function Login({
             )}
 
             <form onSubmit={submit}>
-                {/* ★ 追加：ユーザーID入力欄 */}
+                {/* ★ ユーザーID入力欄（ここにフォーカス） */}
                 <div className="mb-4">
                     <InputLabel htmlFor="user_id" value="ユーザーID" />
 
@@ -59,12 +58,14 @@ export default function Login({
                         name="user_id"
                         value={data.user_id}
                         className="mt-1 block w-full"
+                        isFocused={true}   // ← ★ フォーカスをここに移動
                         onChange={(e) => setData('user_id', e.target.value)}
                     />
 
                     <InputError message={errors.user_id} className="mt-2" />
                 </div>
 
+                {/* ★ メールアドレス欄（フォーカスを外す） */}
                 <div>
                     <InputLabel htmlFor="email" value="Email" />
 
@@ -75,7 +76,6 @@ export default function Login({
                         value={data.email}
                         className="mt-1 block w-full"
                         autoComplete="username"
-                        isFocused={true}
                         onChange={(e) => setData('email', e.target.value)}
                     />
 

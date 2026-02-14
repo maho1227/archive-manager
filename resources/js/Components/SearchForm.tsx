@@ -35,19 +35,16 @@ const SearchForm: React.FC<SearchFormProps> = ({
         className="border px-3 py-2 rounded w-80"
       />
 
-      {loading ? (
-        <div className="inline-flex items-center space-x-2">
-          <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-          <span className="text-gray-700">検索中...</span>
-        </div>
-      ) : (
-        <button
-          type="submit"
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-        >
-          検索
-        </button>
-      )}
+      {/* ★ スピナー削除 → 常にボタンを表示 */}
+      <button
+        type="submit"
+        disabled={loading}
+        className={`px-4 py-2 rounded text-white ${
+          loading ? "bg-blue-300 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600"
+        }`}
+      >
+        {loading ? "検索中..." : "検索"}
+      </button>
     </form>
   );
 };
