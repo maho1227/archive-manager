@@ -27,5 +27,8 @@ Route::middleware('auth')->group(function () {
         return Inertia::render('ArchiveList');
     });
 });
+Route::get('/debug-columns', function () {
+    return \Illuminate\Support\Facades\Schema::getColumnListing('archives');
+});
 
 require __DIR__ . '/auth.php';
