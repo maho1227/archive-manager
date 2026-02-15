@@ -10,12 +10,8 @@ return new class extends Migration {
      */
     public function up()
     {
-        Schema::table('archives', function (Blueprint $table) {
-            $table->dropColumn('user_id');
-        });
-
-        Schema::table('archives', function (Blueprint $table) {
-            $table->unsignedBigInteger('user_id')->nullable();
+        Schema::table('users', function (Blueprint $table) {
+            $table->string('user_id')->unique()->after('id');
         });
     }
 
@@ -24,7 +20,7 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::table('archives', function (Blueprint $table) {
+        Schema::table('users', function (Blueprint $table) {
             //
         });
     }
