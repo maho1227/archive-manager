@@ -54,3 +54,13 @@ Route::post('/archives', [ArchiveController::class, 'store']);
 Route::get('/archiveList', [ArchiveController::class, 'index']);
 Route::delete('/archives/{videoId}', [ArchiveController::class, 'destroy']);
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) { return $request->user(); });
+
+Route::get('/debug-log-text', function () {
+    $path = storage_path('logs/laravel.log');
+    if (!file_exists($path)) {
+        return response()->json(['error' => 'log not found'], 404);
+    }
+    return response()->json([
+        'log' => file_get_contents($path)
+    ]);
+});
