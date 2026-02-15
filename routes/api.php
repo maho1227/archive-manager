@@ -6,6 +6,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ArchiveController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
+/*
+|--------------------------------------------------------------------------
+| YouTube API
+|--------------------------------------------------------------------------
+*/
 
 Route::get('/youtube/channel-uploads', function (Request $request) {
     $channelId = $request->input('channelId');
@@ -48,19 +53,40 @@ Route::get('/youtube/channel-uploads', function (Request $request) {
     return $playlistRes->json();
 });
 
-// Route::post('/login', [AuthenticatedSessionController::class, 'store'])->name('api.login');
-// Route::post('/logout', [AuthenticatedSessionController::class, 'destroy']);
+/*
+|--------------------------------------------------------------------------
+| Archive API
+|--------------------------------------------------------------------------
+*/
+
 Route::post('/archives', [ArchiveController::class, 'store']);
 Route::get('/archiveList', [ArchiveController::class, 'index']);
 Route::delete('/archives/{videoId}', [ArchiveController::class, 'destroy']);
-// Route::middleware('auth:sanctum')->get('/user', function (Request $request) { return $request->user(); });
 
+/*
+|--------------------------------------------------------------------------
+| Debug Routes（Render 本番デバッグ用）
+|--------------------------------------------------------------------------
+*/
+
+// ログ閲覧
 Route::get('/debug-log-text', function () {
     $path = storage_path('logs/laravel.log');
+
     if (!file_exists($path)) {
         return response()->json(['error' => 'log not found'], 404);
     }
-    return response()->json([
-        'log' => file_get_contents($path)
-    ]);
+
+    try {
+        $content = file($path, FILE_IGNORE_NEW_LINES);
+        return response()->json(['log' => $content]);
+    } catch (\Exception $e) {
+        return response()->json(['error' => $e->getMessage()], 500);
+    }
+});
+
+// ログ強制生成
+Route::get('/debug-force-log', function () {
+    \Log::error('force log test');
+    return response()->json(['status' => 'ok']);
 });
