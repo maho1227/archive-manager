@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
 use App\Models\Archives;
 use App\Models\User;
 
@@ -11,17 +10,24 @@ class ArchiveController extends Controller
 {
     public function index(Request $request)
     {
-        // ★ クエリパラメータから user_id を取得 
-        $userId = $request->query('user_id'); // ★ user_id が無い場合は空配列を返す（安全） 
+        // ★ クエリパラメータから user_id を取得
+        $userId = $request->query('user_id');
+
+        // ★ user_id が無い場合は空配列を返す（安全）
         if (!$userId) {
             return response()->json([]);
         }
-        // ★ user_id で絞り込んで返す 
-        return response()->json(Archives::where('user_id', $userId)
-            ->orderBy('created_at', 'desc')
-            ->distinct('video_id')
-            ->get());
+
+        // ★ DISTINCT ON(video_id) を使うため ORDER BY video_id が必須
+        return response()->json(
+            Archives::where('user_id', $userId)
+                ->orderBy('video_id')              // ← PostgreSQL DISTINCT ON の必須条件
+                ->orderBy('created_at', 'desc')    // ← video_id 内で最新順
+                ->distinct('video_id')
+                ->get()
+        );
     }
+
     public function store(Request $request)
     {
         // 入力チェック
@@ -70,14 +76,17 @@ class ArchiveController extends Controller
     public function destroy(Request $request, $videoId)
     {
         $userId = $request->query('user_id');
-        // video_id で検索 
+
+        // video_id で検索
         $archive = Archives::where('user_id', $userId)
-            ->where('video_id', $videoId)->first();
+            ->where('video_id', $videoId)
+            ->first();
+
         if (!$archive) {
             return response()->json(['message' => 'Not found'], 404);
         }
+
         $archive->delete();
         return response()->json(['message' => 'Deleted'], 200);
     }
 }
-
