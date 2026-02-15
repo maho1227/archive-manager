@@ -4,17 +4,18 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
-    public function up(): void
+return new class extends Migration {
+    /**
+     * Run the migrations.
+     */
+    public function up()
     {
         Schema::create('archives', function (Blueprint $table) {
             $table->id();
 
-            // ログインユーザー
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            // ★ User.user_id と紐づける（string）
+            $table->string('user_id');
 
-            // YouTube 情報
             $table->string('video_id');
             $table->string('title');
             $table->string('thumbnail')->nullable();
@@ -24,6 +25,9 @@ return new class extends Migration
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
         Schema::dropIfExists('archives');
