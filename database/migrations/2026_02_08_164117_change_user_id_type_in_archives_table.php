@@ -10,18 +10,13 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::table('archives', function (Blueprint $table) {
-            $table->string('user_id')->change(); // ★ INT → VARCHAR に変更 
-        });
+        // 何もしない
     }
-
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::table('archives', function (Blueprint $table) {
-            $table->integer('user_id')->change();
-        });
+        // 何もしない 
     }
 };
