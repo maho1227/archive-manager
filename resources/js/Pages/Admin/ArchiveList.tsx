@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { router, usePage, Head } from "@inertiajs/react";
-import VideoCardGrid from "../Components/VideoCard";
-import Paginator from "../Parts/Paginator";
+import VideoCardGrid from "../../Components/VideoCard";
+import Paginator from "../../Parts/Paginator";
 import AppLayout from "@/Layouts/AppLayout";
 
 interface Archive {

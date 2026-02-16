@@ -13,7 +13,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
     localStorage.removeItem("channelId");
     localStorage.removeItem("ytSearchCache");
 
-    router.post(route("logout"));
+    router.post(route("admin.logout"));
   };
 
   return (

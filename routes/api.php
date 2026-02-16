@@ -4,14 +4,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ArchiveController;
-use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Api\LoginController;
 
-/*
-|--------------------------------------------------------------------------
-| YouTube API
-|--------------------------------------------------------------------------
-*/
-
+// YouTube API
 Route::get('/youtube/channel-uploads', function (Request $request) {
     $channelId = $request->input('channelId');
     $pageToken = $request->input('pageToken');
@@ -53,22 +48,29 @@ Route::get('/youtube/channel-uploads', function (Request $request) {
     return $playlistRes->json();
 });
 
-/*
-|--------------------------------------------------------------------------
-| Archive API
-|--------------------------------------------------------------------------
-*/
+// SPA認証API
+Route::post('/logout', [LoginController::class, 'logout'])->middleware('auth:sanctum');
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/user', fn() => auth()->user());
+});
 
-Route::post('/archives', [ArchiveController::class, 'store']);
-Route::get('/archiveList', [ArchiveController::class, 'index']);
-Route::delete('/archives/{videoId}', [ArchiveController::class, 'destroy']);
+// アーカイブ系API
+Route::middleware('auth:sanctum')->group(function () {
+    // ログイン中のユーザー情報 
+    Route::get('/user', fn() => auth()->user());
 
-/*
-|--------------------------------------------------------------------------
-| Debug Routes（Render 本番デバッグ用）
-|--------------------------------------------------------------------------
-*/
+    // アーカイブ一覧 
+    Route::get('/archiveList', [ArchiveController::class, 'index']);
 
+    // アーカイブ登録
+    Route::post('/archives', [ArchiveController::class, 'store']);
+
+    // アーカイブ削除
+    Route::delete('/archives/{videoId}', [ArchiveController::class, 'destroy']);
+
+});
+
+// for debug
 // ログ閲覧
 Route::get('/debug-log-text', function () {
     $path = storage_path('logs/laravel.log');

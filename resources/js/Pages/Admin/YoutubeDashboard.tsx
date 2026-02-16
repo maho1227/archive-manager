@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { router, Head } from "@inertiajs/react";
-import SearchForm from "../Components/SearchForm";
-import VideoCardGrid from "../Components/VideoCard";
-import Paginator from "../Parts/Paginator";
+import SearchForm from "../../Components/SearchForm";
+import VideoCardGrid from "../../Components/VideoCard";
+import Paginator from "../../Parts/Paginator";
 import AppLayout from "@/Layouts/AppLayout";
 import { usePage } from "@inertiajs/react";
 

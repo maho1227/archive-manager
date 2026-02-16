@@ -14,6 +14,7 @@ export default function Login({
     status?: string;
     canResetPassword: boolean;
 }) {
+    console.log("a")
     const { data, setData, post, processing, errors, reset } = useForm({
         email: '',
         password: '',
@@ -22,6 +23,7 @@ export default function Login({
     });
 
     const submit: FormEventHandler = (e) => {
+        console.log("PPP")
         e.preventDefault();
 
         if (!data.user_id.trim()) {
@@ -29,7 +31,8 @@ export default function Login({
             return;
         }
 
-        post(route('login'), {
+        // ★ ここを admin.login.store に変更（最重要）
+        post(route('admin.login.store'), {
             onSuccess: () => {
                 localStorage.setItem("user_id", data.user_id);
             },
@@ -48,7 +51,7 @@ export default function Login({
             )}
 
             <form onSubmit={submit}>
-                {/* ★ ユーザーID入力欄（ここにフォーカス） */}
+                {/* ★ ユーザーID入力欄 */}
                 <div className="mb-4">
                     <InputLabel htmlFor="user_id" value="ユーザーID" />
 
@@ -58,14 +61,14 @@ export default function Login({
                         name="user_id"
                         value={data.user_id}
                         className="mt-1 block w-full"
-                        isFocused={true}   // ← ★ フォーカスをここに移動
+                        isFocused={true}
                         onChange={(e) => setData('user_id', e.target.value)}
                     />
 
                     <InputError message={errors.user_id} className="mt-2" />
                 </div>
 
-                {/* ★ メールアドレス欄（フォーカスを外す） */}
+                {/* メールアドレス欄（任意） */}
                 <div>
                     <InputLabel htmlFor="email" value="Email" />
 
@@ -82,6 +85,7 @@ export default function Login({
                     <InputError message={errors.email} className="mt-2" />
                 </div>
 
+                {/* パスワード */}
                 <div className="mt-4">
                     <InputLabel htmlFor="password" value="Password" />
 
@@ -98,6 +102,7 @@ export default function Login({
                     <InputError message={errors.password} className="mt-2" />
                 </div>
 
+                {/* Remember me */}
                 <div className="mt-4 block">
                     <label className="flex items-center">
                         <Checkbox
@@ -113,6 +118,7 @@ export default function Login({
                     </label>
                 </div>
 
+                {/* ボタン */}
                 <div className="mt-4 flex items-center justify-end">
                     {canResetPassword && (
                         <Link
